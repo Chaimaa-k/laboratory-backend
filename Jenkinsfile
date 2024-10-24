@@ -16,22 +16,31 @@ pipeline {
                 bat 'mvn clean install '
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                // Construire l'image Docker en utilisant le Dockerfile présent dans le projet
-                script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+        stage('Check Docker Image') {
+                    steps {
+                        script {
+                            // Vérifie si l'image Docker existe déjà
+                            def imageExists = sh(script: "docker images -q ${DOCKER_IMAGE}:${DOCKER_TAG}", returnStdout: true).trim()
+
+                            if (imageExists) {
+                                echo "Docker image ${DOCKER_IMAGE}:${DOCKER_TAG} exists. Skipping build."
+                            } else {
+                                echo "Docker image ${DOCKER_IMAGE}:${DOCKER_TAG} not found. Building..."
+                                // Si l'image n'existe pas, la construire
+                                docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                            }
+                        }
                     }
                 }
-            }
         stage('Run Docker Container') {
                     steps {
-                       script {
-                          // Exécutez le conteneur à partir de l'image construite
-                           docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8082')
+                        script {
+                            // Exécuter le conteneur Docker à partir de l'image construite ou existante
+                            echo "Running Docker container from image ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8082')
+                        }
+                    }
                 }
-            }
-    }
 
     post {
         success {
