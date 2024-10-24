@@ -24,6 +24,13 @@ pipeline {
                     }
                 }
             }
+        stage('Run Docker Container') {
+                    steps {
+                       script {
+                          // Exécutez le conteneur à partir de l'image construite
+                           docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8082')
+                }
+            }
     }
 
     post {
