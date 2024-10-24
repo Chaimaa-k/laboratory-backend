@@ -16,16 +16,15 @@ pipeline {
                 bat 'mvn clean install '
             }
         }
-    }
-
-    stage('Build Docker Image') {
-                steps {
-                    // Construire l'image Docker en utilisant le Dockerfile présent dans le projet
-                    script {
-                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+        stage('Build Docker Image') {
+            steps {
+                // Construire l'image Docker en utilisant le Dockerfile présent dans le projet
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                     }
                 }
             }
+    }
 
     post {
         success {
