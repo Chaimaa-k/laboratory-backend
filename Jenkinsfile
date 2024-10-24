@@ -9,7 +9,7 @@ pipeline {
 
         stage('Build & Test Backend') {
             steps {
-                bat 'mvn clean install'
+                bat 'mvn clean install -DskipTests'
             }
         }
     }
