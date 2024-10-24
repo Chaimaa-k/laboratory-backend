@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+            DOCKER_IMAGE = 'my-spring-boot-app'
+            DOCKER_TAG = 'latest'
+        }
     stages {
         stage('Checkout') {
             steps {
@@ -13,6 +17,15 @@ pipeline {
             }
         }
     }
+
+    stage('Build Docker Image') {
+                steps {
+                    // Construire l'image Docker en utilisant le Dockerfile présent dans le projet
+                    script {
+                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    }
+                }
+            }
 
     post {
         success {
